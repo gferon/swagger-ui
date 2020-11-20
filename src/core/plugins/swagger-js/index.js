@@ -6,6 +6,18 @@ import { opId } from "swagger-client/es/helpers"
 import * as configsWrapActions from "./configs-wrap-actions"
 
 export default function({ configs, getConfigs }) {
+  // TODO: if this comes from configs, it means it can be set
+  // above
+  configs.preFetch = function(req) {
+    req.userFetch = function(url, req) {
+      req.redirect = "manual"
+      // this makes swagger-ui fails because the response
+      // is "incomplete" and only contains "response.url"
+      return fetch(url, req)
+    }
+    return req
+  }
+
   return {
     fn: {
       fetch: makeHttp(Http, configs.preFetch, configs.postFetch),
